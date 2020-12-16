@@ -9,9 +9,11 @@ model = Model_Parameters()
 # parameters form the comparam.m file TODO
 model.compute_parameters()
 
+model.integrate()
 
-def polycryst(time,input_temp,model)
+# run as a script
 
-    
 
-    return 
+#
+#
+#plot_solution()

@@ -1,7 +1,7 @@
 # all model parameters
-# create dictionary based on this
 import math
 import numpy as np
+from scipy.optimize import fsolve
 
 """
 % Jordan E. Massad
@@ -86,15 +86,15 @@ class Model_Parameters(object):
         These parameters are computed using the tabulated values above.
 
         """
-        
+
         self.cval               = {}
         self.cval["Er"]         = self.val["EM"]/self.val["EA"] # relative E
+        self.cval["energy1"], self.cval["energy2"]      = energy_params()
+        #self.cval[""] = 
+        self.cval["Tmin"] = 
         self.cval[""] = 
-        self.cval[""] = 
-        self.cval[""] = 
-        self.cval[""] = 
-        self.cval["T_A"] = 
-        self.cval["T_A_sup"] = np.# eT highest temp beyond superelasticity 
+        self.cval["T_A"] = fsolve(Model_Parameters.G(T, dU, dS, T_R, E))
+        self.cval["T_A_sup"] = fsolve(Model_Parameters.G, self.val["TempA"], dU, dS, self.val["TempA"], E) # eT highest temp beyond superelasticity 
         self.cval["qA"] = sqrt((VOL/KB)/self.val["EA"]/2)*1e3;               		# qA [sqrt(K)/MPa]
         self.cval["qM"] = sqrt((VOL/KB)/self.val["EM"]/2)*1e3;               		# qM [sqrt(K)/MPa]
         self.cval["relax_tau"] =  math.pi*math.sqrt(MASS / self.val["EA"] / VOL**(1/3))*1e-3 # relaxation tau [seconds]
@@ -105,6 +105,22 @@ class Model_Parameters(object):
     def G(self, T,dU,dS,T_R,E):
         """
         Returns the Gibbs free energy, accounting for chemical free energy.
-
+        Will need to modify based on the other params...maybe
         """
         return dU - T*dS + self.val["dc"]*(T - T_R - T*math.log(T/T_R)) - E
+
+    def energy_params(self):
+        """
+        Computes and returns the energy parameters a1, b2.
+
+        """
+
+        b1 = self.val["s_hi"] * (2*self.val["EM"]*self.val["eT"] + (1 - self.val["Er"]) * self.val["s_hi"] - self.val["dsig"])
+        b2 = (b1/self.val["EM"] - self.val["dsig"]*self.val["eT"]) / (self.val["T_hi"] - self.val["TempA"]) / 2
+
+        a1 = self.val["TempA"]*b2
+        a1 += self.val["deltac"]*(self.val["TempA"] * self.val["T_hi"] * np.log(self.val["TempA"] / self.val["T_hi"]) / (self.val["T_hi"]-self.val["TempA"]) + self.val["TempA"])
+
+        b2 += self.val["deltac"]*(-self.val["T_hi"] * np.log(self.val["T_hi"] / self.val["TempA"]) / (self.val["T_hi"]-self.val["TempA"]) + 1)
+
+        return a1,b2

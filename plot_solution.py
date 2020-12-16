@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
 
 class plot_solution(object):
-    
+    """
+    Plot function given
+
+    """
     def plot_solution(style="pcolor"):
         # clear the plots 
         plt.ion()

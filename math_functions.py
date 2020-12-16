@@ -20,6 +20,36 @@ class Model(object):
 
         return I
 
+    def sigma(t):
+        """
+        Returns the stress sigma at time t
+        We're using sinusoidal, but we could also use other funtions
+
+        """
+
+        rate = 4/3 # stress rate [MPa/s]
+        sigmax = 200 # amplitude of stress [MPa]
+        T = 2*sigmax/rate # cycle period [s]
+
+        return sigmax*np.sin((np.pi/T)*t)
+
+    def temperature(t):
+        """
+        Returns the temperature at time t.
+        TODO - requires sawtooth function
+
+        """"
+        return 270
+
+    def sawtooth(peak, freq, t):
+        """
+        IDK
+
+        """
+        
+        return 
+
+
 math = Model()
 
 def f(x):
